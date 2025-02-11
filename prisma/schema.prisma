@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id       Int     @id @default(autoincrement())
+  roleName String  @map("role_name") @db.VarChar(50)
+  users    User[]
+
+  @@map("roles")
+}
+
+model User {
+  id           Int          @id @default(autoincrement())
+  username     String       @unique @db.VarChar(100)
+  passwordHash String       @map("password_hash") @db.VarChar(255)
+  roleId       Int?        @map("role_id")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  role         Role?       @relation(fields: [roleId], references: [id])
+  permissions  Permission[]
+
+  @@map("users")
+}
+
+model Compte {
+  numero    String   @id @db.VarChar(50)
+  nomclient String   @db.VarChar(100)
+  solde     Decimal  @db.Decimal(15, 2)
+
+  @@map("compte")
+}
+
+model AuditCompte {
+  id           Int       @id @default(autoincrement())
+  typeAction   String    @map("type_action") @db.VarChar(20)
+  dateAction   DateTime  @default(now()) @map("date_action")
+  numeroCompte String    @map("numero_compte") @db.VarChar(50)
+  nomclient    String    @db.VarChar(100)
+  soldeAncien  Decimal?  @map("solde_ancien") @db.Decimal(15, 2)
+  soldeNouveau Decimal?  @map("solde_nouveau") @db.Decimal(15, 2)
+  utilisateur  String    @db.VarChar(100)
+
+  @@map("audit_compte")
+}
+
+model Permission {
+  id        Int     @id @default(autoincrement())
+  userId    Int     @map("user_id")
+  canInsert Boolean @default(false) @map("can_insert")
+  canUpdate Boolean @default(false) @map("can_update")
+  canDelete Boolean @default(false) @map("can_delete")
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@map("permissions")
+}
