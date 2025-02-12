@@ -262,7 +262,7 @@ export default function UserManagementPage() {
 
   return (
     <SidebarProvider>
-       <ToastContainer />
+      <ToastContainer />
       <AppSidebar />
       <SidebarInset>
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -378,10 +378,10 @@ export default function UserManagementPage() {
                         </TableCell>
                         <TableCell>
                           <Badge
-                            variant={user.role === 'ADMIN' ? 'default' : 'secondary'}
+                            variant={user.role?.roleName === 'ADMIN' ? 'default' : 'secondary'}
                             className="flex w-fit items-center gap-1"
                           >
-                            {user.role === 'ADMIN' ? (
+                            {user.role?.roleName === 'ADMIN' ? (
                               <>
                                 <ShieldCheck className="h-3 w-3" />
                                 Admin
