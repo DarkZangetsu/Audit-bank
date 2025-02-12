@@ -1,6 +1,8 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Home,
@@ -97,9 +99,20 @@ export default function UserManagementPage() {
       const data = await response.json()
       setUsers(data)
     } catch (err) {
-      setError(err.message)
+      toast.error(err.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
     }
   }
+
+  useEffect(() => {
+    fetchUsers()
+  }, [])
 
   const handleAddUser = async () => {
     try {
@@ -114,32 +127,23 @@ export default function UserManagementPage() {
       await fetchUsers()
       setIsAddDialogOpen(false)
       resetForm()
+      toast.success('Utilisateur créé avec succès', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
     } catch (err) {
-      setError(err.message)
-    }
-  }
-
-  const handleUpdateUser = async (id) => {
-    try {
-      // Préparer les données à envoyer
-      const updateData = {
-        username: editingUser.username,
-        role: editingUser.role?.roleName || editingUser.role, // Utiliser roleName s'il existe
-        permissions: editingUser.permissions
-      }
-
-      const response = await fetch(`/api/users/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updateData)
-      })
-
-      if (!response.ok) throw new Error('Erreur lors de la mise à jour')
-
-      await fetchUsers()
-      setEditingUser(null)
-    } catch (err) {
-      setError(err.message)
+      toast.error(err.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
     }
   }
 
@@ -154,8 +158,86 @@ export default function UserManagementPage() {
       if (!response.ok) throw new Error('Erreur lors de la suppression')
 
       await fetchUsers()
+      toast.success('Utilisateur supprimé avec succès', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
     } catch (err) {
-      setError(err.message)
+      toast.error(err.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
+    }
+  }
+
+
+  const handleEditClick = (user) => {
+    setEditingUser(user)
+    setFormData({
+      username: user.username,
+      role: user.role?.roleName || user.role,
+      permissions: user.permissions || {
+        canInsert: false,
+        canUpdate: false,
+        canDelete: false
+      }
+    })
+    setIsAddDialogOpen(true)
+  }
+
+  const handleSubmit = async () => {
+    if (editingUser) {
+      await handleUpdateUser(editingUser.id)
+    } else {
+      await handleAddUser()
+    }
+  }
+
+  const handleUpdateUser = async (id) => {
+    try {
+      const updateData = {
+        username: formData.username,
+        role: formData.role,
+        permissions: formData.permissions
+      }
+
+      const response = await fetch(`/api/users/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData)
+      })
+
+      if (!response.ok) throw new Error('Erreur lors de la mise à jour')
+
+      await fetchUsers()
+      setIsAddDialogOpen(false)
+      setEditingUser(null)
+      resetForm()
+      toast.success(`Les informations de ${updateData.username} ont été mises à jour`, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
+    } catch (err) {
+      toast.error(err.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
     }
   }
 
@@ -170,22 +252,17 @@ export default function UserManagementPage() {
         canDelete: false
       }
     })
+    setEditingUser(null)
   }
 
-  const handleEditClick = (user) => {
-    setEditingUser({
-      ...user,
-      role: user.role?.roleName || user.role, // Utiliser roleName s'il existe
-      permissions: user.permissions || {
-        canInsert: false,
-        canUpdate: false,
-        canDelete: false
-      }
-    })
+  const handleDialogClose = () => {
+    setIsAddDialogOpen(false)
+    resetForm()
   }
 
   return (
     <SidebarProvider>
+       <ToastContainer />
       <AppSidebar />
       <SidebarInset>
         <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -213,7 +290,7 @@ export default function UserManagementPage() {
             </div>
           </div>
         </header>
-  
+
         <div className="p-6">
           <Card className="w-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
@@ -235,7 +312,7 @@ export default function UserManagementPage() {
                 </DialogTrigger>
               </Dialog>
             </CardHeader>
-  
+
             <CardContent>
               {error && (
                 <Alert variant="destructive" className="mb-6">
@@ -243,7 +320,7 @@ export default function UserManagementPage() {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-  
+
               <div className="rounded-md border">
                 <Table>
                   <TableHeader>
@@ -288,9 +365,9 @@ export default function UserManagementPage() {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <Avatar className="h-8 w-8">
-                              <AvatarImage 
-                                src={`https://avatar.vercel.sh/${user.username}.png`} 
-                                alt={user.username} 
+                              <AvatarImage
+                                src={`https://avatar.vercel.sh/${user.username}.png`}
+                                alt={user.username}
                               />
                               <AvatarFallback>
                                 {user.username.charAt(0).toUpperCase()}
@@ -300,7 +377,7 @@ export default function UserManagementPage() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge 
+                          <Badge
                             variant={user.role === 'ADMIN' ? 'default' : 'secondary'}
                             className="flex w-fit items-center gap-1"
                           >
@@ -371,7 +448,7 @@ export default function UserManagementPage() {
                   </TableBody>
                 </Table>
               </div>
-  
+
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogContent>
                   <DialogHeader>
@@ -401,7 +478,7 @@ export default function UserManagementPage() {
                         required
                       />
                     </div>
-  
+
                     {!editingUser && (
                       <div className="space-y-2">
                         <Label className="flex items-center gap-2">
@@ -416,7 +493,7 @@ export default function UserManagementPage() {
                         />
                       </div>
                     )}
-  
+
                     <div className="space-y-2">
                       <Label className="flex items-center gap-2">
                         <Shield className="h-4 w-4" />
@@ -445,7 +522,7 @@ export default function UserManagementPage() {
                         </SelectContent>
                       </Select>
                     </div>
-  
+
                     <div className="space-y-3">
                       <Label className="flex items-center gap-2">
                         <Key className="h-4 w-4" />
@@ -489,11 +566,11 @@ export default function UserManagementPage() {
                     </div>
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                    <Button variant="outline" onClick={handleDialogClose}>
                       <X className="mr-2 h-4 w-4" />
                       Annuler
                     </Button>
-                    <Button onClick={handleAddUser}>
+                    <Button onClick={handleSubmit}>
                       {editingUser ? (
                         <>
                           <Save className="mr-2 h-4 w-4" />

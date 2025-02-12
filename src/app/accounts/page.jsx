@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   Table,
   TableBody,
@@ -23,8 +25,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
-
 
 import { AppSidebar } from "@/components/app-sidebar"
 import {
@@ -84,10 +84,13 @@ const AccountsList = () => {
         const data = await response.json();
         setComptes(data);
       } catch (error) {
-        toast({
-          title: "Erreur",
-          description: error.message,
-          variant: "destructive"
+        toast.error(error.message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
         });
       } finally {
         setIsLoading(false);
@@ -120,20 +123,27 @@ const AccountsList = () => {
           throw new Error(data.error || 'Erreur lors de la sauvegarde');
         }
         
-        toast({
-          title: "Succès",
-          description: currentCompte 
-            ? "Compte mis à jour avec succès"
-            : "Compte créé avec succès"
+        toast.success(currentCompte 
+          ? "Compte mis à jour avec succès"
+          : "Compte créé avec succès", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
         });
         
         setOpenDialog(false);
         fetchComptes();
       } catch (error) {
-        toast({
-          title: "Erreur",
-          description: error.message,
-          variant: "destructive"
+        toast.error(error.message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
         });
       }
     };
@@ -151,17 +161,24 @@ const AccountsList = () => {
           throw new Error(data.error || 'Erreur lors de la suppression');
         }
         
-        toast({
-          title: "Succès",
-          description: "Compte supprimé avec succès"
+        toast.success("Compte supprimé avec succès", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
         });
         
         fetchComptes();
       } catch (error) {
-        toast({
-          title: "Erreur",
-          description: error.message,
-          variant: "destructive"
+        toast.error(error.message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
         });
       }
     };
@@ -188,6 +205,7 @@ const AccountsList = () => {
 
     return (
         <SidebarProvider>
+          <ToastContainer />
           <AppSidebar />
           <SidebarInset>
             <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
