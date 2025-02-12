@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+# Gestion d'Audit de Comptes Bancaires  
 
-First, run the development server:
+Ce projet est une application de gestion d'audit de comptes bancaires construite avec [Next.js](https://nextjs.org), [Prisma](https://www.prisma.io/) pour la gestion de la base de données, et [PostgreSQL](https://www.postgresql.org) comme système de gestion de base de données relationnelle.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Prérequis  
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Node.js v16 ou supérieur  
+- PostgreSQL installé et configuré  
+- Prisma CLI installé (`npm install prisma --save-dev`)  
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Installation  
 
-## Learn More
+1. Clonez ce dépôt :  
+   ```bash  
+   https://github.com/DarkZangetsu/Audit-bank.git  
+   cd nom-du-repo  
+   ```  
 
-To learn more about Next.js, take a look at the following resources:
+2. Installez les dépendances :  
+   ```bash  
+   npm install  
+   # ou  
+   yarn install  
+   # ou  
+   pnpm install  
+   ```  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Configuration  
 
-## Deploy on Vercel
+1. Créez un fichier `.env` à la racine du projet en vous basant sur le fichier `.env.example`.  
+   Exemple :  
+   ```env  
+   DATABASE_URL=postgresql://user:password@localhost:5432/nom_base_de_donnees  
+   ```  
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. Mettez à jour le schéma Prisma si nécessaire :  
+   ```bash  
+   npx prisma migrate dev --name init  
+   ```  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Lancer le serveur  
+
+Pour démarrer le serveur de développement :  
+
+```bash  
+npm run dev  
+# ou  
+yarn dev  
+# ou  
+pnpm dev  
+```  
+
+Accédez à [http://localhost:3000](http://localhost:3000) pour voir l'application. Les modifications sont automatiquement prises en compte grâce au rechargement à chaud.
+
+---
+
+## Structure des pages  
+
+Vous pouvez commencer à éditer les pages en modifiant les fichiers sous `app/page.js` ou `app` selon vos besoins. Les changements sont automatiquement rechargés.
+
+---
+
+## Déploiement  
+
+Le moyen le plus simple de déployer cette application est d'utiliser [Vercel](https://vercel.com). Suivez les étapes suivantes pour le déploiement :  
+
+1. Connectez votre projet à Vercel.  
+2. Ajoutez vos variables d'environnement dans le tableau de bord Vercel.  
+3. Déployez l'application.  
+
+Pour plus d'informations, consultez la [documentation de déploiement Next.js](https://nextjs.org/docs/app/building-your-application/deploying).
+
+---
+
+## Ressources utiles  
+
+- [Documentation Next.js](https://nextjs.org/docs)  
+- [Documentation Prisma](https://www.prisma.io/docs)  
+- [Documentation PostgreSQL](https://www.postgresql.org/docs/)  
+- [Tutoriel interactif Next.js](https://nextjs.org/learn)  
+
+---
+
+## Contributions  
+
+Les contributions sont les bienvenues ! N'hésitez pas à soumettre une issue ou une pull request.  
+
