@@ -17,7 +17,7 @@ export function signToken(user) {
 
 export async function verifyAuth(req) {
   try {
-    const cookieStore = await cookies(); // Make sure to await cookies()
+    const cookieStore = await cookies(); 
     const token = cookieStore.get('token');
 
     if (!token) {

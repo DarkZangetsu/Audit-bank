@@ -17,37 +17,25 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-// Fonction pour décoder le token JWT
-const parseJwt = (token) => {
-  try {
-    return JSON.parse(atob(token.split('.')[1]));
-  } catch (e) {
-    return null;
-  }
-};
-
-// Fonction pour obtenir le rôle depuis les cookies
-const getUserRole = () => {
-  const cookies = document.cookie.split(';');
-  const tokenCookie = cookies.find(cookie => cookie.trim().startsWith('token='));
-  
-  if (!tokenCookie) return null;
-  
-  const token = tokenCookie.split('=')[1];
-  const decodedToken = parseJwt(token);
-  
-  return decodedToken?.role || null;
-};
-
 export function AppSidebar({ ...props }) {
-  const [userRole, setUserRole] = React.useState(null);
+  const [user, setUser] = React.useState(null);
 
   React.useEffect(() => {
-    const role = getUserRole();
-    setUserRole(role);
+    const verifyUser = async () => {
+      try {
+        const response = await fetch('/api/auth/verify');
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        }
+      } catch (err) {
+        console.error('Erreur de vérification:', err);
+      }
+    };
+
+    verifyUser();
   }, []);
 
-  // Définition des éléments de navigation en fonction du rôle
   const getNavItems = () => {
     const baseItems = [
       {
@@ -75,8 +63,7 @@ export function AppSidebar({ ...props }) {
       },
     ];
 
-    // Ajouter les éléments réservés à l'admin
-    if (userRole === 'ADMIN') {
+    if (user?.role === 'ADMIN') {
       baseItems.push({
         title: "Utilisateurs",
         url: "/users",
@@ -94,17 +81,10 @@ export function AppSidebar({ ...props }) {
   };
 
   const getUserData = () => {
-    if (userRole === 'ADMIN') {
-      return {
-        name: "Admin",
-        email: "admin@banque.com",
-        avatar: "/avatars/admin.jpg",
-      };
-    }
     return {
-      name: "Utilisateur",
-      email: "user@banque.com",
-      avatar: "/avatars/user.jpg",
+      name: user?.name || 'Utilisateur',
+      email: user?.email || '',
+      avatar: user?.avatar || '/avatars/default.jpg',
     };
   };
 
@@ -114,7 +94,7 @@ export function AppSidebar({ ...props }) {
         <div className="flex items-center space-x-2 px-4 py-2">
           <Shield className="h-6 w-6" />
           <span className="font-bold">
-            {userRole === 'ADMIN' ? 'Admin Bancaire' : 'Espace Client'}
+            {user?.role === 'ADMIN' ? 'Admin Bancaire' : 'Espace Client'}
           </span>
         </div>
       </SidebarHeader>
